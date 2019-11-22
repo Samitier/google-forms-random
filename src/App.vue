@@ -1,19 +1,19 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view />
-  </div>
+  <router-view />
 </template>
 
+<script lang="ts">
+import { createComponent } from '@vue/composition-api'
+
+export default createComponent({
+  name: 'App',
+})
+</script>
+
 <style lang="stylus">
-#app
-  font-family 'Avenir', Helvetica, Arial, sans-serif
-  -webkit-font-smoothing antialiased
-  -moz-osx-font-smoothing grayscale
-  text-align center
-  color #2c3e50
-  margin-top 60px
+html, body
+  height 100%
+  width 100%
+  margin 0
+  overflow hidden
 </style>
