@@ -33,6 +33,10 @@ export default new Vuex.Store({
       store.formIndex = index
     },
   },
-  actions: {},
+  actions: {
+    goToNext({ commit, state }) {
+      commit('setFormIndex', state.formIndex + 1)
+    },
+  },
   modules: {},
 })
