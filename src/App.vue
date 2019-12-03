@@ -1,44 +1,24 @@
 <template>
   <div class="home">
     <md-card v-if="!currentForm" class="card">
-      <template v-if="!percentage">
-        <md-card-header>
-          <div class="md-title">Welcome to this experiment</div>
-        </md-card-header>
-        <md-card-content>
-          <p>
-            First of all, thank you for your participation. Your help means a
-            lot to us.
-          </p>
-          <p>
-            Below you will see multiple questionnaires being shown. Please make
-            sure <b>all the answers are completed</b> before going to the next
-            one by pressing "next form".
-          </p>
-        </md-card-content>
-      </template>
-      <template v-if="percentage === 100">
-        <md-card-header>
-          <div class="md-title">Experiment finished!</div>
-        </md-card-header>
-        <md-card-content>
-          <p>
-            Thank you very much for your participation!
-          </p>
-        </md-card-content>
-      </template>
+      <md-card-header>
+        <div class="md-title">What makes us happy? Qué nos hace felices?</div>
+      </md-card-header>
+      <md-card-content>
+        <p>
+          Hello. Please select the language you want to use for this experiment.
+        </p>
+        <p>
+          Hola. Por favor selecciona el idioma en el que quieres llevar a cabo
+          este experimento.
+        </p>
+        <md-card-actions>
+          <md-button @click="selectLanguage('en')">English</md-button>
+          <md-button @click="selectLanguage('es')">Español</md-button>
+        </md-card-actions>
+      </md-card-content>
     </md-card>
     <EmbedGForm v-if="currentForm" :src="currentForm" />
-    <md-card class="card" v-if="percentage !== 100">
-      <md-card-content>
-        Please make sure you've finished the current form before pressing next
-        form.
-      </md-card-content>
-      <md-card-actions>
-        <!-- <md-progress-bar md-mode="determinate" :md-value="percentage"></md-progress-bar> -->
-        <md-button @click="goToNext">Next form</md-button>
-      </md-card-actions>
-    </md-card>
   </div>
 </template>
 
@@ -51,9 +31,9 @@ export default createComponent({
   components: { EmbedGForm },
   setup(_, { root }) {
     const currentForm = computed(() => root.$store.getters.currentForm)
-    const percentage = computed(() => root.$store.getters.completionPercentage)
-    const goToNext = () => root.$store.dispatch('goToNext')
-    return { currentForm, percentage, goToNext }
+    const selectLanguage = (language: string) =>
+      root.$store.commit('setLanguage', language)
+    return { currentForm, selectLanguage }
   },
 })
 </script>
@@ -74,9 +54,4 @@ html, body
     margin 1em 1.5em
 .md-card
   border-radius .45em
-.md-progress-bar-fill
-  background-color #448aff
-.md-progress-bar
-  background-color rgba(68,138,255,.38)
-  width: 200px
 </style>

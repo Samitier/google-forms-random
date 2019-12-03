@@ -1,42 +1,34 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 const shuffle = require('lodash/shuffle')
+const random = require('lodash/random')
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    formUrls: shuffle([
-      '1FAIpQLSfDldBWjk7XD8aR94GK8SqvjvkL1EuUksTFgEfKwG9CkrMqog',
-      '1FAIpQLSdDmCbkD7xem1a9MUl1ZBIvzovd8TF6Dm8IrHoqnbeTiifdNg',
-      '1FAIpQLSfJf_y2pTZvN0XVdwg45yzuXU8fVjxC1uncXzNpjDPoAAktSw',
-      '1FAIpQLSe7tPsu5YfC7S1noMW9ES_GT_X9Mhbaa3kfFUTQENxR1YKdpw',
-      '1FAIpQLSesy-kK8VLt6dicske_edSLWZc2x7M3G-qruaZpok97qq3qgg',
-      '1FAIpQLSeor3BZ487lkZdS9jVGmjXj0FbtXkRSghuVYfPki67C-rfeRA',
-      '1FAIpQLSfw_UJcSmFzpmCNDEsZeS9Rl0lbKHBCuq5kAjS-Mos6ewvDmg',
+    language: '',
+    formIndex: random(0, 5),
+    enForms: shuffle([
+      '1FAIpQLScu97bhlZGXZ5xiEfJBI_3ERUnZI_qLqeO8aUDZuvSQHjdaVw',
+      '1FAIpQLSeM7_eTXYlMHCr_nFzxcjQZjfYlC-AP9m0Ej2ayHKWtxiCgpQ',
+      '1FAIpQLSfF3l2PkhTy8ZOcQNZZxQNURHZDw3UwfXKNfOLF2yhzaoE0SQ',
+      '1FAIpQLSe8iJ0pSByaPPlI_XfloSgeu5E9XmXsRDTgy7B0_Q58h9uHuw',
+      '1FAIpQLScIil6PWvE7VeCjH-tN_VVpCKfweVK828pN_iDFfsdePIwxHw',
     ]),
-    formIndex: -1,
+    esForms: shuffle([]),
   },
   getters: {
     currentForm(state) {
-      return state.formUrls[state.formIndex]
-    },
-    completionPercentage(state) {
-      return Math.max(
-        0,
-        Math.min(100, (state.formIndex / state.formUrls.length) * 100)
-      )
+      if (!state.language) return null
+      return state.language === 'es'
+        ? state.esForms[state.formIndex]
+        : state.enForms[state.formIndex]
     },
   },
   mutations: {
-    setFormIndex(store, index) {
-      store.formIndex = index
+    setLanguage(store, language) {
+      store.language = language
     },
   },
-  actions: {
-    goToNext({ commit, state }) {
-      commit('setFormIndex', state.formIndex + 1)
-    },
-  },
-  modules: {},
 })
