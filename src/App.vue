@@ -2,7 +2,9 @@
   <div class="home">
     <md-card v-if="!currentForm" class="card">
       <md-card-header>
-        <div class="md-title">What makes us happy? Qué nos hace felices?</div>
+        <div class="md-title">
+          What makes us happy - Lo que nos hace felices
+        </div>
       </md-card-header>
       <md-card-content>
         <p>
