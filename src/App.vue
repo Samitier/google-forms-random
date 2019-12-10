@@ -1,41 +1,75 @@
 <template>
   <div class="home">
-    <md-card v-if="!currentForm" class="card">
-      <md-card-header>
-        <div class="md-title">
-          What makes us happy - Lo que nos hace felices
-        </div>
-      </md-card-header>
-      <md-card-content>
-        <p>
-          Hello. Please select the language you want to use for this experiment.
-        </p>
-        <p>
-          Hola. Por favor selecciona el idioma en el que quieres llevar a cabo
-          este experimento.
-        </p>
-        <md-card-actions>
-          <md-button @click="selectLanguage('en')">English</md-button>
-          <md-button @click="selectLanguage('es')">Español</md-button>
-        </md-card-actions>
-      </md-card-content>
-    </md-card>
-    <EmbedGForm v-if="currentForm" :src="currentForm" />
+    <h1>What makes us happy?</h1>
+    <div class="graph-cont">
+      <graph
+        id="graph1"
+        storeGetter="graphDataHw"
+        xAxisTitle="p of having what they want"
+        :yAxisTitle="selectedDimension"
+      />
+      <graph
+        id="graph2"
+        storeGetter="graphDataWh"
+        xAxisTitle="p of wanting what they have"
+        :yAxisTitle="selectedDimension"
+      />
+    </div>
+    <div class="graph-cont">
+      <graph
+        id="graph3"
+        storeGetter="graphDataWeightedHw"
+        xAxisTitle="weighted p of having what they want"
+        :yAxisTitle="selectedDimension"
+      />
+      <graph
+        id="graph4"
+        storeGetter="graphDataWeightedWh"
+        xAxisTitle="weighted p of wanting what they have"
+        :yAxisTitle="selectedDimension"
+      />
+    </div>
+    <select v-model="selectedDimension">
+      <option
+        v-for="dimension in dimensions"
+        :key="dimension"
+        v-text="dimension"
+        :value="dimension"
+      />
+    </select>
   </div>
 </template>
 
 <script lang="ts">
-import { createComponent, computed } from '@vue/composition-api'
-import EmbedGForm from '@/components/EmbedGForm.vue'
+import {
+  createComponent,
+  onMounted,
+  reactive,
+  computed,
+} from '@vue/composition-api'
+import 'chartist/dist/chartist.css'
+const Chartist = require('chartist')
+import Graph from './components/graph.vue'
 
 export default createComponent({
   name: 'App',
-  components: { EmbedGForm },
+  components: { Graph },
   setup(_, { root }) {
-    const currentForm = computed(() => root.$store.getters.currentForm)
-    const selectLanguage = (language: string) =>
-      root.$store.commit('setLanguage', language)
-    return { currentForm, selectLanguage }
+    const state = reactive({
+      dimensions: [
+        'gratitude',
+        'growth',
+        'wellBeing',
+        'satisfaction',
+        'maximizers',
+      ],
+    })
+    onMounted(() => root.$store.dispatch('loadAnswers'))
+    const selectedDimension = computed({
+      get: () => root.$store.state.dimension,
+      set: dimension => root.$store.commit('setDimension', dimension),
+    })
+    return { ...state, selectedDimension }
   },
 })
 </script>
@@ -49,11 +83,17 @@ html, body
 .home
   display flex
   flex-direction column
-  max-width 700px
+  max-width 800px
   height 100%
   margin auto
-.card
-    margin 1em 1.5em
-.md-card
-  border-radius .45em
+  overflow auto
+h1
+  text-align center
+  margin 2em
+.graph-cont
+  display flex
+  padding-bottom 2em
+select
+  margin 1em
+  max-width 200px
 </style>
