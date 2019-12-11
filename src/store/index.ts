@@ -10,14 +10,10 @@ const random = require('lodash/random')
 
 Vue.use(Vuex)
 
-function getGraphData(state: any, variable: string) {
-  let sortedData = [...state.parsedData].sort(
+function getGraphData(state: any, getters: any, variable: string) {
+  let sortedData = [...getters.filteredData].sort(
     (a, b) => a[variable] - b[variable]
   )
-  if (state.filter.prop)
-    sortedData = sortedData.filter(
-      s => s[state.filter.prop] === state.filter.value
-    )
   const labels = sortedData.map(s => round(s[variable], 4))
   const series = [sortedData.map((d: any) => d[state.dimension])]
   return {
@@ -33,16 +29,30 @@ export default new Vuex.Store({
     dimension: 'wellBeing',
     filter: {
       prop: '',
-      value: '',
+      value: 0,
     },
   },
   getters: {
-    graphDataHw: state => getGraphData(state, 'pHaveWhatTheyWant'),
-    graphDataWh: state => getGraphData(state, 'pWantWhatTheyHave'),
-    graphDataWeightedHw: state =>
-      getGraphData(state, 'pWeightedHaveWhatTheyWant'),
-    graphDataWeightedWh: state =>
-      getGraphData(state, 'pWeightedWantWhatTheyHave'),
+    graphDataHw: (state, getters) =>
+      getGraphData(state, getters, 'pHaveWhatTheyWant'),
+    graphDataWh: (state, getters) =>
+      getGraphData(state, getters, 'pWantWhatTheyHave'),
+    graphDataWeightedHw: (state, getters) =>
+      getGraphData(state, getters, 'pWeightedHaveWhatTheyWant'),
+    graphDataWeightedWh: (state, getters) =>
+      getGraphData(state, getters, 'pWeightedWantWhatTheyHave'),
+    graphDataHavingPosessions: (state, getters) =>
+      getGraphData(state, getters, 'pHavingPosessions'),
+    graphDataWantingPosessions: (state, getters) =>
+      getGraphData(state, getters, 'pWantingPosessions'),
+    filteredData(state) {
+      if (state.filter.prop && state.filter.value >= 0) {
+        return state.parsedData.filter(
+          (s: any) => s[state.filter.prop] === state.filter.value + 1
+        )
+      }
+      return state.parsedData
+    },
   },
   mutations: {
     setParsedData(state, parsedData = []) {
@@ -50,6 +60,12 @@ export default new Vuex.Store({
     },
     setDimension(state, dimension) {
       state.dimension = dimension
+    },
+    setFilterProp(state, prop) {
+      state.filter.prop = prop
+    },
+    setFilterValue(state, value) {
+      state.filter.value = value
     },
   },
   actions: {

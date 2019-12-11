@@ -8,6 +8,7 @@ const GENDER = 6
 const EDUCATION_LEVEL = 7
 const STUDY_FIELD = 8
 const PROFESSION = 9
+const INCOME = 11
 const GRATITUDE = [12, 18]
 const GROWTH = [18, 27]
 const SATISFACTION = [27, 32]
@@ -126,6 +127,13 @@ function getWeightedProbabilityOfHavingWhatTheyWant(
   return have / haveAndWant
 }
 
+function parseAge(age: number) {
+  if (age < 30) return 1
+  if (age < 39) return 2
+  if (age < 60) return 3
+  return 4
+}
+
 export function parseRawData(rawDataArr = []) {
   const parsedData: ParsedData[] = []
 
@@ -134,10 +142,11 @@ export function parseRawData(rawDataArr = []) {
     const categories = slice(rawData, CATEGORIES)
     parsedData.push(
       new ParsedData(
-        get(rawData, AGE),
+        parseAge(get(rawData, AGE)),
         get(rawData, GENDER),
         get(rawData, EDUCATION_LEVEL),
         get(rawData, STUDY_FIELD),
+        get(rawData, INCOME),
         get(rawData, PROFESSION),
         sum(slice(rawData, GRATITUDE)),
         sum(slice(rawData, GROWTH)),
